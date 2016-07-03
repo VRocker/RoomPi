@@ -1,0 +1,90 @@
+#!/bin/sh
+#
+# sshd        Starts sshd.
+#
+
+# Make sure the ssh-keygen progam exists
+[ -f /usr/bin/ssh-keygen ] || exit 0
+
+# Create any missing keys
+# Check for the SSH2 RSA key
+if [ ! -f /etc/ssh/ssh_host_rsa_key ] ; then
+	echo Generating RSA Key...
+	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -C '' -N ''
+
+	/pi/sbin/savetoflash /etc/ssh/ssh_host_rsa_key
+fi
+
+# Check for the SSH2 DSA key
+if [ ! -f /etc/ssh/ssh_host_dsa_key ] ; then
+	echo Generating DSA Key...
+	echo THIS CAN TAKE A MINUTE OR TWO!
+	echo
+        /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -C '' -N ''
+
+	/pi/sbin/savetoflash /etc/ssh/ssh_host_dsa_key
+fi
+
+# Check for the SSH2 ECDSA key
+if [ ! -f /etc/ssh/ssh_host_ecdsa_key ]; then
+	echo Generating ECDSA Key...
+	echo THIS CAN TAKE A MINUTE OR TWO!
+	echo
+	/usr/bin/ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -C '' -N ''
+
+	/pi/sbin/savetoflash /etc/ssh/ssh_host_ecdsa_key
+fi
+
+# Check for the SSH2 ED25519 key
+if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
+	echo Generating ED25519 Key...
+	echo THIS CAN TAKE A MINUTE OR TWO!
+	echo
+	/usr/bin/ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
+	# Save the ED25519 key to the flash so we don't have to generate a new key everytime it boots
+	/pi/sbin/savetoflash /etc/ssh/ssh_host_ed25519_key
+	/pi/sbin/savetoflash /etc/ssh/ssh_host_ed25519_key.pub
+fi
+
+# Change the permissions on files
+chmod 0600 /etc/ssh/ssh_host_rsa_key
+chmod 0600 /etc/ssh/ssh_host_dsa_key
+chmod 0600 /etc/ssh/ssh_host_ecdsa_key
+chmod 0600 /etc/ssh/ssh_host_ed25519_key
+
+umask 077
+
+start() {
+	printf "Starting sshd: "
+	/usr/sbin/sshd
+	touch /var/lock/sshd
+	echo "OK"
+}
+stop() {
+	printf "Stopping sshd: "
+	killall sshd
+	rm -f /var/lock/sshd
+	echo "OK"
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+DIR=$(dirname $2)
+if [ ! -d "$DIR" ]; then
+    mkdir -p "$DIR"
+fi
+cp -R "$1" $DIR/

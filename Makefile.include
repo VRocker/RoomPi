@@ -1,0 +1,26 @@
+CFLAGS+=-D__VIDEOCORE4__ -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -O3
+CXXFLAGS+=-D__VIDEOCORE4__ -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -O3
+
+INCLUDES+=-I$(BUILDROOTDIR)/output/host/usr/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/interface/vcos/pthreads -I$(BUILDROOTDIR)/output/host/usr/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/interface/vmcs_host/linux
+
+all: $(BIN) $(LIB)
+
+%.o: %.c
+	@rm -f $@ 
+	$(BUILDCC) $(CFLAGS) $(INCLUDES) -c $< -o $@ -Wno-deprecated-declarations
+
+%.o: %.cpp
+	@rm -f $@ 
+	$(BUILDCXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ -Wno-deprecated-declarations
+
+%.bin: $(OBJS)
+	$(BUILDCXX) -o $@ -Wl,--whole-archive $(OBJS) $(LDFLAGS) -Wl,--no-whole-archive -rdynamic
+	cp $@ $(OUTBINDIR)
+
+%.a: $(OBJS)
+	$(BUILDAR) r $@ $^
+
+clean:
+	for i in $(OBJS); do (if test -e "$$i"; then ( rm $$i ); fi ); done
+	@rm -f $(BIN) $(LIB)
+

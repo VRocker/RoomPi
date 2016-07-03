@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Save config
+# Saves the configuration files to the flash
+#
+
+MNT="/mnt"
+DEVICE="/dev/mmcblk0p2"
+
+if mount -o rw $DEVICE $MNT ; then
+	echo -n "Saving configuration to flash..."
+
+	# Save any pi config files
+	$(dirname $0)/cpmkdir /pi/etc/ $MNT/conf/pi/etc/
+
+	# Save the passwd and shadow files
+	$(dirname $0)/cpmkdir /etc/passwd $MNT/conf/pi/passwd
+	$(dirname $0)/cpmkdir /etc/shadow $MNT/conf/pi/shadow
+
+	# Save the SSH keys
+	$(dirname $0)/cpmkdir /root/.ssh/authorized_keys $MNT/conf/root/.ssh/authorized_keys
+
+	echo "Done."
+fi
+	
+sync
+umount $MNT

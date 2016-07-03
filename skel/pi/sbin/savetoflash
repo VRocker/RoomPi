@@ -1,0 +1,11 @@
+#!/bin/sh
+
+MNT="/mnt"
+DEVICE="/dev/mmcblk0p2"
+
+if mount -o rw $DEVICE $MNT ; then
+	$(dirname $0)/cpmkdir $1 $MNT/conf/$1
+fi
+	
+sync
+umount $MNT
