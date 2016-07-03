@@ -5,6 +5,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+#pragma region Borrowed from WiringPi
+// https://git.drogon.net/?p=wiringPi;a=summary
 void delay (unsigned int howLong)
 {
   struct timespec sleeper;
@@ -45,6 +47,7 @@ void delayMicroseconds (unsigned int howLong)
     nanosleep (&sleeper, NULL) ;
   }
 }
+#pragma endregion
 
 bool DHT11::ReadData(DHT11_Data* data)
 {
