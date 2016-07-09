@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISingleton.h"
+#include "PacketDefs.h"
 
 enum class SocketErrors
 {

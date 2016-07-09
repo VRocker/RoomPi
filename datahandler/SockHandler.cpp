@@ -1,7 +1,12 @@
 #include "SockHandler.h"
 #include <zmq.h>
+#include <msgpack.h>
 #include <stdlib.h>
 #include <memory.h>
+#include "SensorInfoRecvPacket.h"
+
+template<>
+SockHandler* ISingleton< SockHandler >::m_singleton = nullptr;
 
 SocketErrors SockHandler::Startup(const char* socketName)
 {
@@ -80,6 +85,7 @@ void SockHandler::Run(void)
 				packet[size] = 0;
 
 				// Parse the packet
+				ParsePacket(packet, size);
 				
 				free(packet);
 				packet = nullptr;
@@ -117,4 +123,42 @@ void SockHandler::Send(const char* data, unsigned int size)
 void SockHandler::ParsePacket(const char* data, int len)
 {
 	// Parse the incoming packet
+	// Packets use msgpack-c
+
+	msgpack_unpacked msg;
+	msgpack_unpacker unpacker;
+
+	msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
+
+	msgpack_unpacker_reserve_buffer(&unpacker, len);
+	memcpy(msgpack_unpacker_buffer(&unpacker), data, len);
+	msgpack_unpacker_buffer_consumed(&unpacker, len);
+
+	msgpack_unpacked_init(&msg);
+
+	msgpack_unpack_return ret = msgpack_unpacker_next(&unpacker, &msg);
+
+	if (ret)
+	{
+		// First thing should be a 'Packet ID' to determine what the packet actually contains
+		if (msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER)
+		{
+			PrimaryPacketIDs primaryPacketID = (PrimaryPacketIDs)msg.data.via.u64;
+
+			switch (primaryPacketID)
+			{
+			case PrimaryPacketIDs::SensorInfo:
+			{
+				SensorInfoRecvPacket::ParsePacket(&unpacker, &msg);
+			}
+			break;
+			}
+		}
+	}
+
+	msgpack_unpacked_destroy(&msg);
+	msgpack_unpacker_destroy(&unpacker);
+
+	// Send a blank reply to the client to stop it freezing up
+	SockHandler::GetSingleton()->Send(nullptr, 0);
 }
