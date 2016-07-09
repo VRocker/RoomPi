@@ -1,4 +1,4 @@
-OBJS=gpiohandler.o main.o
+OBJS=../shared/gpiohandler.o main.o DoorStatePacket.o
 
 CXXFLAGS+=-std=c++11
 BIN=doorsense.bin

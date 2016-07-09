@@ -1,22 +1,76 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "gpiohandler.h"
+#include "clientsock/ClientSock.h"
+#include "DoorStatePacket.h"
+
+static bool g_isRunning = true;
+
+void handleExit()
+{
+	ClientSock::CleanupSingleton();
+	gpiohandler::CleanupSingleton();
+}
+
+void sig_handler(int signo)
+{
+	// A SIGTERM or SIGINT has been fired, tell the application to stop running
+	g_isRunning = false;
+}
+
+void daemonise(void)
+{
+	int pid = 0;
+
+	if ((pid = fork()) < 0)
+	{
+		// It forking failed!
+		exit(1);
+	}
+
+	if (pid > 0)
+		exit(0);
+	else
+	{
+		// Daemonising
+		setsid();
+	}
+}
 
 int main()
 {
-	printf( "Setting direction to In\n" );
-	gpiohandler::getSingleton()->SetDirection(25, GPIO_Direction::In);
+	// Throw the application in the background
+#ifndef _DEBUG
+	daemonise();
+#endif
+
+	atexit(handleExit);
+
+	// Handle signals
+	signal(SIGTERM, sig_handler);
+	signal(SIGINT, sig_handler);
+
+	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
+
+	gpiohandler::GetSingleton()->SetDirection(25, GPIO_Direction::In);
 
 	bool oldState = false;
-	while ( true )
+	while (g_isRunning)
 	{
-		bool state = gpiohandler::getSingleton()->ReadGPIO(25);
-		if ( state != oldState )
-			printf( "Door state is now: %s\n", state ? "Closed" : "Open" );
+		bool state = gpiohandler::GetSingleton()->ReadGPIO(25);
+		if (state != oldState)
+		{
+			printf("Door state is now: %s\n", state ? "Closed" : "Open");
+			// Packet expects an IsOpen but the state is reversed
+			DoorStatePacket::State(!state)
+		}
 
 		oldState = state;
 
 		sleep( 1 );
 	}
+
+	ClientSock::GetSingleton()->Disconnect();
+
 	return 0;
 }
