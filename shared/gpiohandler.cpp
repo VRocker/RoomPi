@@ -24,7 +24,8 @@
 #define GPIO_PULL *(m_gpio+37) // Pull up/pull down
 #define GPIO_PULLCLK0 *(m_gpio+38) // Pull up/pull down clock
 
-gpiohandler* gpiohandler::m_singleton = nullptr;
+template<>
+gpiohandler* ISingleton< gpiohandler >::m_singleton = nullptr;
 
 gpiohandler::gpiohandler()
 	: m_gpio(nullptr), m_gpioMap(nullptr)
