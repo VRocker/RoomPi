@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "dht11.h"
-
+#include "gpiohandler.h"
 #include "clientsock/ClientSock.h"
 #include "TempSensorPacket.h"
 
@@ -12,6 +12,7 @@ static bool g_isRunning = true;
 void handleExit()
 {
 	ClientSock::CleanupSingleton();
+	gpiohandler::CleanupSingleton();
 }
 
 void sig_handler(int signo)

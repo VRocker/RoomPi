@@ -55,25 +55,25 @@ bool DHT11::ReadData(DHT11_Data* data)
 	unsigned int timings = 0, counter = 0;
 	bool lastState = true;
 
-	gpiohandler::getSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::Out);
+	gpiohandler::GetSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::Out);
 
-	gpiohandler::getSingleton()->WriteGPIO(DHT11_PIN, false);
+	gpiohandler::GetSingleton()->WriteGPIO(DHT11_PIN, false);
 	delay (18); // 18 milliseconds
-	gpiohandler::getSingleton()->WriteGPIO(DHT11_PIN, true);
+	gpiohandler::GetSingleton()->WriteGPIO(DHT11_PIN, true);
 	//delayMicroseconds( 20 ); // 40 Microseconds
-	gpiohandler::getSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::In);
+	gpiohandler::GetSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::In);
 
 	for ( unsigned int i = 0; i < 85; ++i )
 	{
 		counter = 0;
-		while ( gpiohandler::getSingleton()->ReadGPIO(DHT11_PIN) == lastState )
+		while ( gpiohandler::GetSingleton()->ReadGPIO(DHT11_PIN) == lastState )
 		{
 			delayMicroseconds(1);
 			if (++counter == 255 )
 				break;
 			
 		}
-		lastState = gpiohandler::getSingleton()->ReadGPIO(DHT11_PIN);
+		lastState = gpiohandler::GetSingleton()->ReadGPIO(DHT11_PIN);
 
 		if (counter == 255 )
 			break;
