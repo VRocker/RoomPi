@@ -1,4 +1,6 @@
-OBJS=../shared/gpiohandler.o main.o DoorStatePacket.o
+OBJS=../shared/gpiohandler.o main.o DoorStatePacket.o ../shared/clientsock/ClientSock.o
+LDFLAGS+=-lzmq -lmsgpackc
+INCLUDES+=-I../shared
 
 CXXFLAGS+=-std=c++11
 BIN=doorsense.bin

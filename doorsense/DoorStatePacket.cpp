@@ -19,7 +19,10 @@ void DoorStatePacket::State(bool open)
 
 			PreparePacket(pk, (uint8_t)SensorPacketIDs::DoorStatus);
 
-			msgpack_pack_bool(pk, open);
+	if ( open )
+		msgpack_pack_true(pk);
+	else
+		msgpack_pack_false(pk);
 
 			buffer->data[buffer->size] = 0;
 
