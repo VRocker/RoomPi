@@ -5,6 +5,7 @@
 #include "dht11.h"
 
 #include "clientsock/ClientSock.h"
+#include "TempSensorPacket.h"
 
 static bool g_isRunning = true;
 
@@ -57,8 +58,12 @@ int main()
 	{
 		printf( "Reading data...\n" );
 		DHT11_Data data;
-		if ( DHT11::ReadData( &data ) )
-			printf( "Temp: %d.%d C, Humidity: %d.%d\n", data.tempWhole, data.tempFraction, data.humidityWhole, data.humidityFraction );
+		if (DHT11::ReadData(&data))
+		{
+			printf("Temp: %d.%d C, Humidity: %d.%d\n", data.tempWhole, data.tempFraction, data.humidityWhole, data.humidityFraction);
+			// Send the data to the datahandler
+			TempSensorPacket::TempAndHumidity(data.tempWhole, data.humidityWhole);
+		}
 
 		sleep( 1 );
 	}
