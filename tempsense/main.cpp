@@ -4,7 +4,14 @@
 #include <unistd.h>
 #include "dht11.h"
 
+#include "clientsock/ClientSock.h"
+
 static bool g_isRunning = true;
+
+void handleExit()
+{
+	ClientSock::CleanupSingleton();
+}
 
 void sig_handler(int signo)
 {
@@ -34,11 +41,17 @@ void daemonise( void )
 int main()
 {
 	// Throw the application in the background
-	//daemonise();
+#ifndef _DEBUG
+	daemonise();
+#endif
+
+	atexit(handleExit);
 
 	// Handle signals
 	signal(SIGTERM, sig_handler);
 	signal(SIGINT, sig_handler);
+
+	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
 	while ( g_isRunning )
 	{
@@ -49,6 +62,8 @@ int main()
 
 		sleep( 1 );
 	}
+
+	ClientSock::GetSingleton()->Disconnect();
 
 	return 0;
 }
