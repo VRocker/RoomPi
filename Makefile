@@ -1,4 +1,4 @@
-SUBDIRS = tempsense doorsense
+SUBDIRS = tempsense doorsense datahandler
 
 export BUILDROOTDIR = $(CURDIR)/buildroot
 export SKELDIR = 	$(CURDIR)/skel
