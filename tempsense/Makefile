@@ -1,4 +1,4 @@
-OBJS=dht11.o ../shared/gpiohandler.o main.o ../shared/clientsock/clientsock.o
+OBJS=dht11.o ../shared/gpiohandler.o main.o ../shared/clientsock/ClientSock.o TempSensorPacket.o
 LDFLAGS+=-lzmq -lmsgpackc
 INCLUDES+=-I../shared
 

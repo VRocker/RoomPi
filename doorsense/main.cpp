@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
 #include "gpiohandler.h"
 #include "clientsock/ClientSock.h"
 #include "DoorStatePacket.h"
@@ -62,7 +64,7 @@ int main()
 		{
 			printf("Door state is now: %s\n", state ? "Closed" : "Open");
 			// Packet expects an IsOpen but the state is reversed
-			DoorStatePacket::State(!state)
+			DoorStatePacket::State(!state);
 		}
 
 		oldState = state;
