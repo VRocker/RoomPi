@@ -1,7 +1,5 @@
-CFLAGS+=-D__VIDEOCORE4__ -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -O3
-CXXFLAGS+=-D__VIDEOCORE4__ -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -O3
-
-INCLUDES+=-I$(BUILDROOTDIR)/output/host/usr/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/interface/vcos/pthreads -I$(BUILDROOTDIR)/output/host/usr/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/interface/vmcs_host/linux
+CFLAGS+=-O3
+CXXFLAGS+=-O3
 
 all: $(BIN) $(LIB)
 
