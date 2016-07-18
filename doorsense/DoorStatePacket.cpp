@@ -11,33 +11,36 @@ void DoorStatePacket::PreparePacket( void* packer, unsigned char packetID)
 void DoorStatePacket::State(bool open)
 {
 	msgpack_sbuffer* buffer = msgpack_sbuffer_new();
-	msgpack_packer* pk = msgpack_packer_new(buffer, msgpack_sbuffer_write);
+	if (buffer)
+	{
+		if (pk)
+		{
+			msgpack_packer* pk = msgpack_packer_new(buffer, msgpack_sbuffer_write);
 
-	PreparePacket(pk, (uint8_t)SensorPacketIDs::DoorStatus);
+			PreparePacket(pk, (uint8_t)SensorPacketIDs::DoorStatus);
 
 	if ( open )
 		msgpack_pack_true(pk);
 	else
 		msgpack_pack_false(pk);
 
-	buffer->data[buffer->size] = 0;
+			buffer->data[buffer->size] = 0;
 
-	// Send the data off to the DataHandler process
-	ClientSock::GetSingleton()->Send(buffer->data, buffer->size);
+				// Send the data off to the DataHandler process
+			ClientSock::GetSingleton()->Send(buffer->data, buffer->size);
 
-	// Stops ZeroMQ from stalling as it must handle a recv before continuing
-	ClientSock::GetSingleton()->Recv();
+				// Stops ZeroMQ from stalling as it must handle a recv before continuing
+			ClientSock::GetSingleton()->Recv();
 
-	// Cleanup memory
-	if (buffer)
-	{
-		msgpack_sbuffer_free(buffer);
-		buffer = nullptr;
-	}
+				// Cleanup memory
+	
+			msgpack_sbuffer_free(buffer);
+			buffer = nullptr;
+	
 
-	if (pk)
-	{
-		msgpack_packer_free(pk);
-		pk = nullptr;
+	
+			msgpack_packer_free(pk);
+			pk = nullptr;
+		}
 	}
 }
