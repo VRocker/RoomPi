@@ -1,11 +1,15 @@
 #include "SensorInfoRecvPacket.h"
 #include <msgpack.h>
 #include "PacketDefs.h"
+#include <stdio.h>
 
 void SensorInfoRecvPacket::ParsePacket(void * _unpacker, void * _msg)
 {
-	msgpack_unpacked msg = *(msgpack_unpacked*)_msg;
+	//msgpack_unpacked msg = *(msgpack_unpacked*)_msg;
 
+	printf( "Unpacking...\n" );
+	msgpack_unpacked msg;
+	msgpack_unpacked_init(&msg);
 	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
 
 	if (ret)
@@ -13,6 +17,7 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker, void * _msg)
 		// Parse the sensorInfo PacketID
 		if (msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER)
 		{
+			printf( "Second Packet ID: %i\n", msg.data.via.u64);
 			switch ((SensorPacketIDs)msg.data.via.u64)
 			{
 			case SensorPacketIDs::TempAndHumid:
@@ -33,8 +38,11 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker, void * _msg)
 
 void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker, void * _msg)
 {
-	msgpack_unpacked msg = *(msgpack_unpacked*)_msg;
+	printf( "Temp and Humid...\n" );
+	msgpack_unpacked msg;
+	msgpack_unpacked_init(&msg);
 
+	printf( "Unpacking...\n" );
 	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
 
 	if ( ret )
@@ -42,6 +50,7 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker, void * _msg)
 		if ((msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER) || (msg.data.type == MSGPACK_OBJECT_NEGATIVE_INTEGER))
 		{
 			int64_t temp = msg.data.via.i64;
+			printf( "Temp: %i\n", temp );
 
 			// TODO: Send this somewhere
 		}

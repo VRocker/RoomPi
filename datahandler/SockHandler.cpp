@@ -74,25 +74,32 @@ void SockHandler::Run(void)
 
 		if (items[0].revents & ZMQ_POLLIN)
 		{
+			zmq_msg_t message;
+
+			zmq_msg_init(&message);
+
 			while (true)
 			{
-				zmq_msg_t message;
-
 				int size = zmq_msg_recv(&message, m_socket, 0);
+				if ( size > 0)
+				{
+					char* packet = (char*) malloc(size + 1);
+					memcpy(packet, zmq_msg_data(&message), size);
+					packet[size] = 0;
 
-				char* packet = (char*) malloc(size + 1);
-				memcpy(packet, zmq_msg_data(&message), size);
-				packet[size] = 0;
+					// Parse the packet
+					ParsePacket(packet, size);
 
-				// Parse the packet
-				ParsePacket(packet, size);
-				
-				free(packet);
-				packet = nullptr;
+					free(packet);
+					packet = nullptr;
+				}
 
+				printf( "More?...\n" );
 				if (!zmq_msg_more(&message))
 					break;
 			}
+
+			zmq_msg_close(&message);
 		}
 		
 		zmq_sleep(1);
@@ -109,12 +116,13 @@ void SockHandler::Send(const char* data, unsigned int size)
 	// We do this so we can send a null message back to the client
 	if (size)
 	{
-		zmq_msg_init_size(&msg, size);
+		zmq_msg_init_size(&msg, size+1);
 		memcpy(zmq_msg_data(&msg), data, size);
 	}
 	else
 		zmq_msg_init(&msg);
 
+	printf( "Sending...\n" );
 	zmq_msg_send(&msg, m_socket, 0);
 
 	zmq_msg_close(&msg);
@@ -130,12 +138,14 @@ void SockHandler::ParsePacket(const char* data, int len)
 
 	msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
 
+	printf( "Reserving...\n" );
 	msgpack_unpacker_reserve_buffer(&unpacker, len);
 	memcpy(msgpack_unpacker_buffer(&unpacker), data, len);
 	msgpack_unpacker_buffer_consumed(&unpacker, len);
 
 	msgpack_unpacked_init(&msg);
 
+	printf( "Unpacking...\n" );
 	msgpack_unpack_return ret = msgpack_unpacker_next(&unpacker, &msg);
 
 	if (ret)
@@ -145,6 +155,7 @@ void SockHandler::ParsePacket(const char* data, int len)
 		{
 			PrimaryPacketIDs primaryPacketID = (PrimaryPacketIDs)msg.data.via.u64;
 
+			printf( "Packet ID: %u\n", primaryPacketID  );
 			switch (primaryPacketID)
 			{
 			case PrimaryPacketIDs::SensorInfo:
