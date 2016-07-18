@@ -13,20 +13,19 @@ void DoorStatePacket::State(bool open)
 	msgpack_sbuffer* buffer = msgpack_sbuffer_new();
 	if (buffer)
 	{
+		msgpack_packer* pk = msgpack_packer_new(buffer, msgpack_sbuffer_write);
 		if (pk)
 		{
-			msgpack_packer* pk = msgpack_packer_new(buffer, msgpack_sbuffer_write);
-
 			PreparePacket(pk, (uint8_t)SensorPacketIDs::DoorStatus);
 
-	if ( open )
-		msgpack_pack_true(pk);
-	else
-		msgpack_pack_false(pk);
+			if (open)
+				msgpack_pack_true(pk);
+			else
+				msgpack_pack_false(pk);
 
 			buffer->data[buffer->size] = 0;
 
-				// Send the data off to the DataHandler process
+			// Send the data off to the DataHandler process
 			ClientSock::GetSingleton()->Send(buffer->data, buffer->size);
 
 				// Stops ZeroMQ from stalling as it must handle a recv before continuing
@@ -36,8 +35,6 @@ void DoorStatePacket::State(bool open)
 	
 			msgpack_sbuffer_free(buffer);
 			buffer = nullptr;
-	
-
 	
 			msgpack_packer_free(pk);
 			pk = nullptr;
