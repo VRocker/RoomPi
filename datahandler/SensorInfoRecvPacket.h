@@ -3,10 +3,10 @@
 class SensorInfoRecvPacket
 {
 public:
-	static void ParsePacket(void* unpacker, void* msg);
+	static void ParsePacket(void* unpacker);
 
 private:
-	static void ParseTempAndHumidity(void* unpacker, void* msg);
-	static void ParseDoorStatus(void* unpacker, void* msg);
+	static void ParseTempAndHumidity(void* unpacker);
+	static void ParseDoorStatus(void* unpacker);
 };
 

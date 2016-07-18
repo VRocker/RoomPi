@@ -3,11 +3,10 @@
 #include "PacketDefs.h"
 #include <stdio.h>
 
-void SensorInfoRecvPacket::ParsePacket(void * _unpacker, void * _msg)
+void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 {
 	//msgpack_unpacked msg = *(msgpack_unpacked*)_msg;
 
-	printf( "Unpacking...\n" );
 	msgpack_unpacked msg;
 	msgpack_unpacked_init(&msg);
 	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
@@ -22,27 +21,28 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker, void * _msg)
 			{
 			case SensorPacketIDs::TempAndHumid:
 			{
-				ParseTempAndHumidity(_unpacker, &msg);
+				ParseTempAndHumidity(_unpacker);
 			}
 			break;
 
 			case SensorPacketIDs::DoorStatus:
 			{
-				ParseDoorStatus(_unpacker, &msg);
+				ParseDoorStatus(_unpacker);
 			}
 			break;
 			}
 		}
 	}
+
+	msgpack_unpacked_destroy(&msg);
 }
 
-void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker, void * _msg)
+void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker)
 {
 	printf( "Temp and Humid...\n" );
 	msgpack_unpacked msg;
 	msgpack_unpacked_init(&msg);
 
-	printf( "Unpacking...\n" );
 	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
 
 	if ( ret )
@@ -68,11 +68,14 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker, void * _msg)
 			}
 		}
 	}
+
+	msgpack_unpacked_destroy(&msg);
 }
 
-void SensorInfoRecvPacket::ParseDoorStatus(void * _unpacker, void * _msg)
+void SensorInfoRecvPacket::ParseDoorStatus(void * _unpacker)
 {
-	msgpack_unpacked msg = *(msgpack_unpacked*)_msg;
+	msgpack_unpacked msg;
+	msgpack_unpacked_init(&msg);
 
 	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
 
@@ -85,4 +88,6 @@ void SensorInfoRecvPacket::ParseDoorStatus(void * _unpacker, void * _msg)
 			// TODO: Send this somewhere
 		}
 	}
+
+	msgpack_unpacked_destroy(&msg);
 }
