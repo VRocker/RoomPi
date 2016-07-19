@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Start the door sensor
+#
+
+case "$1" in
+   start)
+     echo -n "Starting door monitor..."
+     start-stop-daemon -q -S -x /pi/bin/doorsense.bin
+     echo "OK."
+     ;;
+   stop)
+     echo -n "Stopping door monitor..."
+     start-stop-daemon -q -K -x /pi/bin/doorsense.bin
+     echo "OK"
+     ;;
+    *)
+     echo $"Usage: $0 {start|stop}"
+     exit 1
+esac
+
+exit $?
+
+

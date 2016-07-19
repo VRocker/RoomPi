@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Setup the data handler
+#
+
+case "$1" in
+   start)
+     echo -n "Starting data handler..."
+     start-stop-daemon -q -S -x /pi/bin/datahandler.bin
+     echo "OK."
+     ;;
+   stop)
+     echo -n "Stopping data handler..."
+     start-stop-daemon -q -K -x /pi/bin/datahandler.bin
+     echo "OK"
+     ;;
+    *)
+     echo $"Usage: $0 {start|stop}"
+     exit 1
+esac
+
+exit $?
+
+
