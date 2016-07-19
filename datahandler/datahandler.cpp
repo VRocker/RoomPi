@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "webapiv1.h"
 
 void handleExit()
 {
@@ -19,6 +20,8 @@ void sig_handler(int signum)
 
 void daemonise(void)
 {
+	return;
+
 	int pid = 0;
 
 	if ((pid = fork()) < 0)
@@ -49,6 +52,14 @@ int main(int argc, char *argv[])
 
 	SockHandler* handler = SockHandler::GetSingleton();
 	handler->Startup("ipc:///tmp/datasock.sock");
+
+	// Login to the web API
+	while (webapiv1::GetSingleton()->Authenticate() != eAPIErrors::Okay)
+	{
+		// Keep trying to login
+		// Try agin in 5 minutes if it failed
+		sleep(300);
+	}
 
 	handler->Run();
 
