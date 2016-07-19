@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "webapiv1.h"
 #include "Utils.h"
+#include <stdio.h>
 
 void handleExit()
 {
@@ -55,11 +56,14 @@ int main(int argc, char *argv[])
 	handler->Startup("ipc:///tmp/datasock.sock");
 
 	{
+		printf( "Getting serial..." );
 		char serial[16] = { 0 };
 		getSerialNumber(serial, sizeof(serial));
+		printf( "serial: %s\n", serial );
 		webapiv1::GetSingleton()->SetDeviceSerial(serial);
 	}
 
+	printf( "setting key\n" );
 	// TODO: read from the config file
 	webapiv1::GetSingleton()->SetDeviceAPIKey("ratableprestonpanskudu");
 	// Login to the web API

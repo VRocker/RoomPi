@@ -1,5 +1,5 @@
-OBJS=datahandler.o SockHandler.o SensorInfoRecvPacket.o 
-LDFLAGS+=-lzmq -lmsgpackc
+OBJS=datahandler.o SockHandler.o SensorInfoRecvPacket.o webapiv1.o Utils.o
+LDFLAGS+=-lzmq -lmsgpackc -lcurl -ljson-c
 INCLUDES+=-I../shared
 
 CXXFLAGS+=-std=c++11
