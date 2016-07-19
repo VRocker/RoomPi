@@ -74,6 +74,12 @@ eAPIErrors webapiv1::Authenticate()
 {
 	if (!GetBaseUrl())
 		return eAPIErrors::NoBaseURL;
+
+	if (!m_deviceAPIKey)
+		return eAPIErrors::NoDeviceKey;
+
+	if (!*m_deviceSerial)
+		return eAPIErrors::NoSerialNum;
 	
 	if (!m_curl)
 		return eAPIErrors::FailedCurlInit;

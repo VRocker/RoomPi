@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "webapiv1.h"
+#include "Utils.h"
 
 void handleExit()
 {
@@ -53,6 +54,14 @@ int main(int argc, char *argv[])
 	SockHandler* handler = SockHandler::GetSingleton();
 	handler->Startup("ipc:///tmp/datasock.sock");
 
+	{
+		char serial[16] = { 0 };
+		getSerialNumber(serial, sizeof(serial));
+		webapiv1::GetSingleton()->SetDeviceSerial(serial);
+	}
+
+	// TODO: read from the config file
+	webapiv1::GetSingleton()->SetDeviceAPIKey("ratableprestonpanskudu");
 	// Login to the web API
 	while (webapiv1::GetSingleton()->Authenticate() != eAPIErrors::Okay)
 	{
