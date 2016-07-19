@@ -22,8 +22,6 @@ void sig_handler(int signum)
 
 void daemonise(void)
 {
-	return;
-
 	int pid = 0;
 
 	if ((pid = fork()) < 0)
@@ -43,7 +41,7 @@ void daemonise(void)
 
 int main(int argc, char *argv[])
 {
-#ifndef _DEBUG
+#ifndef DEBUG
 	daemonise();
 #endif
 
