@@ -10,6 +10,7 @@ enum class eAPIErrors
 	NoBaseURL,
 	NoSerialNum,
 	NoDeviceKey,
+	NoAccessToken,
 	FailedCurlInit,	
 	Unsuccessful,
 };

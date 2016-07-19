@@ -2,6 +2,7 @@
 #include <msgpack.h>
 #include "PacketDefs.h"
 #include <stdio.h>
+#include "webapiv1.h"
 
 void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 {
@@ -47,9 +48,11 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker)
 
 	if ( ret )
 	{
+		int temp = 0, humidity = 0;
+
 		if ((msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER) || (msg.data.type == MSGPACK_OBJECT_NEGATIVE_INTEGER))
 		{
-			int temp = msg.data.via.i64;
+			temp = msg.data.via.i64;
 			printf( "Temp: %i\n", temp );
 
 			// TODO: Send this somewhere
@@ -62,12 +65,14 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker)
 		{
 			if ((msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER) || (msg.data.type == MSGPACK_OBJECT_NEGATIVE_INTEGER))
 			{
-				int humidity = msg.data.via.i64;
+				humidity = msg.data.via.i64;
 				printf( "Humidity: %i\n", humidity );
 
 				// TODO: Send this somewhere
 			}
 		}
+
+		webapiv1::GetSingleton()->UpdateTemperature(temp, humidity);
 	}
 
 	msgpack_unpacked_destroy(&msg);
