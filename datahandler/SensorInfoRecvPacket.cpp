@@ -16,7 +16,7 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 		// Parse the sensorInfo PacketID
 		if (msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER)
 		{
-			printf( "Second Packet ID: %i\n", msg.data.via.u64);
+			printf( "Second Packet ID: %i\n", (unsigned char)msg.data.via.u64);
 			switch ((SensorPacketIDs)msg.data.via.u64)
 			{
 			case SensorPacketIDs::TempAndHumid:
@@ -49,7 +49,7 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker)
 	{
 		if ((msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER) || (msg.data.type == MSGPACK_OBJECT_NEGATIVE_INTEGER))
 		{
-			int64_t temp = msg.data.via.i64;
+			int temp = msg.data.via.i64;
 			printf( "Temp: %i\n", temp );
 
 			// TODO: Send this somewhere
@@ -62,7 +62,8 @@ void SensorInfoRecvPacket::ParseTempAndHumidity(void * _unpacker)
 		{
 			if ((msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER) || (msg.data.type == MSGPACK_OBJECT_NEGATIVE_INTEGER))
 			{
-				int64_t humidity = msg.data.via.i64;
+				int humidity = msg.data.via.i64;
+				printf( "Humidity: %i\n", humidity );
 
 				// TODO: Send this somewhere
 			}
