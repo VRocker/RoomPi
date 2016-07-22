@@ -5,9 +5,13 @@
 #include "webapiv1.h"
 #include "Utils.h"
 #include <stdio.h>
+#include "rconfig.h"
 
 void handleExit()
 {
+	rconfig_close();
+
+	webapiv1::CleanupSingleton();
 	SockHandler::CleanupSingleton();
 }
 
@@ -52,20 +56,51 @@ int main(int argc, char *argv[])
 
 	atexit(handleExit);
 
+	rconfig_open("/pi/etc/roompi.conf");
+
 	SockHandler* handler = SockHandler::GetSingleton();
 	handler->Startup("ipc:///tmp/datasock.sock");
 
 	{
-		printf( "Getting serial..." );
+		printf( "Getting serial number... " );
 		char serial[16] = { 0 };
 		getSerialNumber(serial, sizeof(serial));
-		printf( "serial: %s\n", serial );
+		printf( "%s\n", serial );
 		webapiv1::GetSingleton()->SetDeviceSerial(serial);
 	}
 
-	printf( "setting key\n" );
-	// TODO: read from the config file
-	webapiv1::GetSingleton()->SetDeviceAPIKey("ratableprestonpanskudu");
+	{
+loadAPIKey:
+		printf("Getting API Key... ");
+		char apiKey[128] = { 0 };
+		if (!rconfig_get_string("API_KEY", apiKey, sizeof(apiKey)))
+		{
+			printf("%s\n", apiKey);
+			// TODO: read from the config file
+			webapiv1::GetSingleton()->SetDeviceAPIKey(apiKey);
+		}
+		else
+		{
+			printf("ERROR: Failed to find API key\n");
+			printf("Rechecking in 1 minute...\n");
+			sleep(60);
+			goto loadAPIKey;
+		}
+	}
+
+	{
+		printf("Getting reporting URL... ");
+		char reportingURL[255] = { 0 };
+		if (!rconfig_get_string("REPORTING_URL", reportingURL, sizeof(reportingURL)))
+		{
+			printf("%s\n", reportingURL);
+
+			webapiv1::GetSingleton()->SetBaseUrl(reportingURL);
+		}
+		else
+			printf("NOT FOUND. Using default.\n");
+	}
+
 	// Login to the web API
 	while (webapiv1::GetSingleton()->Authenticate() != eAPIErrors::Okay)
 	{
