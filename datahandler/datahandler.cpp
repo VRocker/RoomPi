@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 	{
 		printf( "Getting serial..." );
-		char serial[16] = { 0 };
+		char serial[20] = { 0 };
 		getSerialNumber(serial, sizeof(serial));
 		printf( "serial: %s\n", serial );
 		webapiv1::GetSingleton()->SetDeviceSerial(serial);

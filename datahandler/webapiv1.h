@@ -54,7 +54,7 @@ private:
 private:
 	char* m_baseUrl;
 	char m_accessToken[64];
-	char m_deviceSerial[16];
+	char m_deviceSerial[20];
 	char* m_deviceAPIKey;
 
 	void* m_curl;
