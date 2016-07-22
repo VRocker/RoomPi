@@ -129,7 +129,7 @@ eAPIErrors webapiv1::UpdateTemperature(int temp, int humid)
 						else
 						{
 							token = nullptr;
-							if (json_object_object_get_ex(json, "error", &token))
+							if (json_object_object_get_ex(json, "message", &token))
 							{
 								const char* err = json_object_get_string(token);
 								printf("Error: %s\n", err);

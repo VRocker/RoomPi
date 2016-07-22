@@ -54,12 +54,12 @@ int main()
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
-	gpiohandler::GetSingleton()->SetDirection(25, GPIO_Direction::In);
+	gpiohandler::GetSingleton()->SetDirection(22, GPIO_Direction::In);
 
 	bool oldState = false;
 	while (g_isRunning)
 	{
-		bool state = gpiohandler::GetSingleton()->ReadGPIO(25);
+		bool state = gpiohandler::GetSingleton()->ReadGPIO(22);
 		if (state != oldState)
 		{
 			printf("Door state is now: %s\n", state ? "Closed" : "Open");
