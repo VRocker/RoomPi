@@ -66,7 +66,8 @@ int main()
 			TempSensorPacket::TempAndHumidity(data.tempWhole, data.humidityWhole);
 		}
 
-		sleep( 1 );
+		// Report every minute
+		sleep( 60 );
 	}
 
 	ClientSock::GetSingleton()->Disconnect();
