@@ -67,7 +67,7 @@ int main()
 		}
 
 		// Report every minute
-		sleep( 60 );
+		sleep( 300 );
 	}
 
 	ClientSock::GetSingleton()->Disconnect();
