@@ -76,6 +76,12 @@ int main()
 		printf("Failed to set 'DHT_PIN'. Using default of 25.\n");
 	}
 
+	unsigned int type = TYPE_DHT11;
+	if (rconfig_get_int("DHT_TYPE", (int*)&type))
+	{
+		printf("Failed to set 'DHT_TYPE'. Using default of DHT11.\n");
+	}
+
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
 	while ( g_isRunning )
@@ -86,12 +92,6 @@ int main()
 		{
 			double temp = data.tempWhole;
 			double humidity = data.humidityWhole;
-
-			unsigned int type = TYPE_DHT11;
-			if (rconfig_get_int("DHT_TYPE", (int*)&type))
-			{
-				printf("Failed to set 'DHT_TYPE'. Using default of DHT11.\n");
-			}
 
 			if (type == TYPE_DHT22)
 			{
