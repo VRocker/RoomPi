@@ -10,6 +10,12 @@
 
 static bool g_isRunning = true;
 
+typedef enum
+{
+	TYPE_DHT11 = 0,
+	TYPE_DHT22 = 1,
+} DHTTypes;
+
 void handleExit()
 {
 	rconfig_close();
@@ -64,17 +70,43 @@ int main()
 		printf("Failed to set temp sensing interval. Using default of 5 minutes.\n");
 	}
 
+	unsigned int pin = 25;
+	if (rconfig_get_int("DHT_PIN", (int*)&pin))
+	{
+		printf("Failed to set 'DHT_PIN'. Using default of 25.\n");
+	}
+
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
 	while ( g_isRunning )
 	{
 		printf( "Reading data...\n" );
 		DHT11_Data data;
-		if (DHT11::ReadData(&data))
+		if (DHT11::ReadData(&data, pin))
 		{
-			printf("Temp: %d.%d C, Humidity: %d.%d\n", data.tempWhole, data.tempFraction, data.humidityWhole, data.humidityFraction);
+			double temp = data.tempWhole;
+			double humidity = data.humidityWhole;
+
+			unsigned int type = TYPE_DHT11;
+			if (rconfig_get_int("DHT_TYPE", (int*)&type))
+			{
+				printf("Failed to set 'DHT_TYPE'. Using default of DHT11.\n");
+			}
+
+			if (type == TYPE_DHT22)
+			{
+				temp = ((data.tempWhole & 0x7F) * 256 + data.tempFraction) / 10.0;
+				if ((data.tempWhole & 0x80) != 0) temp *= -1;
+
+				humidity = (data.humidityWhole * 256 + data.humidityFraction) / 10.0;
+
+				printf("Temp: %.2fC, Humidity: %.2f\n", temp, humidity);
+			}
+			else
+				printf("Temp: %d.%d C, Humidity: %d.%d\n", temp, data.tempFraction, humidity, data.humidityFraction);
+
 			// Send the data to the datahandler
-			TempSensorPacket::TempAndHumidity(data.tempWhole, data.humidityWhole);
+			TempSensorPacket::TempAndHumidity(temp, humidity);
 
 			// The data was retrieved, wait for the set time before reporting again
 			sleep(sensingInterval);

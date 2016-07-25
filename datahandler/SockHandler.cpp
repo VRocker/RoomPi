@@ -1,6 +1,7 @@
 #include "SockHandler.h"
 #include <zmq.h>
 #include <msgpack.h>
+#include <zmq_utils.h>
 #include <stdlib.h>
 #include <memory.h>
 #include "SensorInfoRecvPacket.h"

@@ -49,31 +49,31 @@ void delayMicroseconds (unsigned int howLong)
 }
 #pragma endregion
 
-bool DHT11::ReadData(DHT11_Data* data)
+bool DHT11::ReadData(DHT11_Data* data, unsigned int pin)
 {
 	unsigned char dht11_dat[5] = { 0 };
 	unsigned int timings = 0, counter = 0;
 	bool lastState = true;
 
-	gpiohandler::GetSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::Out);
+	gpiohandler::GetSingleton()->SetDirection(pin, GPIO_Direction::Out);
 
-	gpiohandler::GetSingleton()->WriteGPIO(DHT11_PIN, false);
+	gpiohandler::GetSingleton()->WriteGPIO(pin, false);
 	delay (18); // 18 milliseconds
-	gpiohandler::GetSingleton()->WriteGPIO(DHT11_PIN, true);
+	gpiohandler::GetSingleton()->WriteGPIO(pin, true);
 	//delayMicroseconds( 20 ); // 40 Microseconds
-	gpiohandler::GetSingleton()->SetDirection(DHT11_PIN, GPIO_Direction::In);
+	gpiohandler::GetSingleton()->SetDirection(pin, GPIO_Direction::In);
 
 	for ( unsigned int i = 0; i < 85; ++i )
 	{
 		counter = 0;
-		while ( gpiohandler::GetSingleton()->ReadGPIO(DHT11_PIN) == lastState )
+		while ( gpiohandler::GetSingleton()->ReadGPIO(pin) == lastState )
 		{
 			delayMicroseconds(1);
 			if (++counter == 255 )
 				break;
 			
 		}
-		lastState = gpiohandler::GetSingleton()->ReadGPIO(DHT11_PIN);
+		lastState = gpiohandler::GetSingleton()->ReadGPIO(pin);
 
 		if (counter == 255 )
 			break;
