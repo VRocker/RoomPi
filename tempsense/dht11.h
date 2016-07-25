@@ -1,7 +1,5 @@
 #pragma once
 
-#define DHT11_PIN 25
-
 struct DHT11_Data
 {
 	int humidityWhole;
@@ -14,6 +12,6 @@ struct DHT11_Data
 class DHT11
 {
 public:
-	static bool ReadData(DHT11_Data* data);
+	static bool ReadData(DHT11_Data* data, unsigned int pin);
 
 };
