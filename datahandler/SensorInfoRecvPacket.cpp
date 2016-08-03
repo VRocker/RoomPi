@@ -17,7 +17,6 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 		// Parse the sensorInfo PacketID
 		if (msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER)
 		{
-			printf( "Second Packet ID: %i\n", (unsigned char)msg.data.via.u64);
 			switch ((SensorPacketIDs)msg.data.via.u64)
 			{
 			case SensorPacketIDs::TempAndHumid:
@@ -92,6 +91,7 @@ void SensorInfoRecvPacket::ParseDoorStatus(void * _unpacker)
 			bool doorStatus = msg.data.via.boolean;
 
 			// TODO: Send this somewhere
+			webapiv1::GetSingleton()->UpdateDoorState(doorStatus);
 		}
 	}
 

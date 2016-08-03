@@ -24,6 +24,7 @@ public:
 public:
 	eAPIErrors Authenticate();
 	eAPIErrors UpdateTemperature(int temp, int humid);
+	eAPIErrors UpdateDoorState(bool state);
 
 public:
 	void SetBaseUrl(const char* base);
