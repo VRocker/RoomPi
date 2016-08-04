@@ -5,12 +5,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-// Pi 1
-#define BCM2708_PERI_BASE			0x20000000
-// Pi 2
-//#define BCM2708_PERI_BASE			0x3F000000
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000)
-
 // GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)
 #define INP_GPIO(g) *(m_gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g) *(m_gpio+((g)/10)) |=  (1<<(((g)%10)*3))
@@ -28,7 +22,7 @@ template<>
 gpiohandler* ISingleton< gpiohandler >::m_singleton = nullptr;
 
 gpiohandler::gpiohandler()
-	: m_gpio(nullptr), m_gpioMap(nullptr)
+	: m_gpio(nullptr), m_gpioMap(nullptr), m_gpioBase(0x20000000 + 0x200000)
 {
 	SetupIO();
 }
@@ -82,7 +76,7 @@ void gpiohandler::SetupIO()
 		return;
 	}
 
-	m_gpioMap = mmap(NULL, (4 * 1024), PROT_READ | PROT_WRITE, MAP_SHARED, memfd, GPIO_BASE);
+	m_gpioMap = mmap(NULL, (4 * 1024), PROT_READ | PROT_WRITE, MAP_SHARED, memfd, m_gpioBase);
 
 	close(memfd);
 
@@ -95,3 +89,21 @@ void gpiohandler::SetupIO()
 	m_gpio = (volatile unsigned*)m_gpioMap;
 }
 
+void gpiohandler::SetGPIOBase(unsigned int type)
+{
+	switch (type)
+	{
+	case TYPE_PI1:
+		m_gpioBase = 0x20000000 + 0x200000;
+		break;
+
+	case TYPE_PI2:
+	case TYPE_PI3:
+		m_gpioBase = 0x3F000000 + 0x200000;
+		break;
+
+	default:
+		m_gpioBase = 0x20000000 + 0x200000; // default to PI 1
+		break;
+	}
+}
