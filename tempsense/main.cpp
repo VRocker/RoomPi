@@ -76,11 +76,19 @@ int main()
 		printf("Failed to set 'DHT_PIN'. Using default of 25.\n");
 	}
 
-	unsigned int type = TYPE_DHT11;
-	if (rconfig_get_int("DHT_TYPE", (int*)&type))
+	unsigned int dht_type = TYPE_DHT11;
+	if (rconfig_get_int("DHT_TYPE", (int*)&dht_type))
 	{
 		printf("Failed to set 'DHT_TYPE'. Using default of DHT11.\n");
 	}
+
+	unsigned int pi_type = TYPE_PI1;
+	if (rconfig_get_int("PI_TYPE", (int*)&pi_type))
+	{
+		printf("Failed to set 'PI_TYPE'. Using default of PI1.\n");
+	}
+
+	gpiohandler::GetSingleton()->SetGPIOBase(pi_type);
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
@@ -93,7 +101,7 @@ int main()
 			double temp = data.tempWhole;
 			double humidity = data.humidityWhole;
 
-			if (type == TYPE_DHT22)
+			if (dht_type == TYPE_DHT22)
 			{
 				temp = ((data.tempWhole & 0x7F) * 256 + data.tempFraction) / 10.0;
 				if ((data.tempWhole & 0x80) != 0) temp *= -1;
