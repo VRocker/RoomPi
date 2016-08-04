@@ -29,13 +29,7 @@ gpiohandler::gpiohandler()
 
 gpiohandler::~gpiohandler()
 {
-	if (m_gpioMap > 0)
-	{
-		munmap(m_gpioMap, (4 * 1024));
-		m_gpioMap = nullptr;
-	}
-
-	m_gpio = nullptr;
+	UnmapIO();
 }
 
 void gpiohandler::SetDirection(int pin, GPIO_Direction dir)
@@ -89,8 +83,21 @@ void gpiohandler::SetupIO()
 	m_gpio = (volatile unsigned*)m_gpioMap;
 }
 
+void gpiohandler::UnmapIO()
+{
+	if (m_gpioMap > 0)
+	{
+		munmap(m_gpioMap, (4 * 1024));
+		m_gpioMap = nullptr;
+	}
+
+	m_gpio = nullptr;
+}
+
 void gpiohandler::SetGPIOBase(unsigned int type)
 {
+	UnmapIO();
+
 	switch (type)
 	{
 	case TYPE_PI0:
@@ -106,4 +113,7 @@ void gpiohandler::SetGPIOBase(unsigned int type)
 	default:
 		break;
 	}
+
+
+	SetupIO();
 }

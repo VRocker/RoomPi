@@ -30,6 +30,7 @@ public:
 
 private:
 	void SetupIO();
+	void UnmapIO();
 
 private:
 	volatile unsigned* m_gpio;
