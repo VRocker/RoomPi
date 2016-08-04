@@ -48,14 +48,20 @@ PI_TYPE=<pi_type> # The type of Pi that you are running; 0 = Pi Zero, 1 = Pi, 2 
 
 You will need to use vi to modify your configuration file.
 
+# WiFi Configuration
+
 Once this is set, your last step is to configure the wifi (if applicable). This is simply a case of running the following command:
 ```
 wpa_passphrase <SSID> <Passphrase> >> /etc/wpa_supplicant.conf
 ```
 
+# Finishing things off
+
 Your final step is to save the configuration. As the operating system runs entirely in RAM, no changes are persistant unless they are saved to the configuration partition (The secondary F2FS one we created earlier).
 There are scripts located in /pi/sbin to help with this. 
+
 To save your roompi.conf file run ```/pi/sbin/saveconfig```. This command will also save any changes you have made to your root password.
+
 To save your wireless configuration, run ```/pi/sbin/savetoflash /etc/wpa_supplicant.conf```
 
 Now you can reboot and the device should automatically connect to your wireless network and begin reporting to the roompi website. Your final step is to approve your device on the website as it will be classed as an Unauthorised device until you have manually approved it.
