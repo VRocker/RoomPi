@@ -10,6 +10,7 @@ enum class GPIO_Direction
 
 typedef enum
 {
+	TYPE_PI0 = 0,
 	TYPE_PI1 = 1,
 	TYPE_PI2 = 2,
 	TYPE_PI3 = 3,

@@ -93,6 +93,7 @@ void gpiohandler::SetGPIOBase(unsigned int type)
 {
 	switch (type)
 	{
+	case TYPE_PI0:
 	case TYPE_PI1:
 		m_gpioBase = 0x20000000 + 0x200000;
 		break;
@@ -103,7 +104,6 @@ void gpiohandler::SetGPIOBase(unsigned int type)
 		break;
 
 	default:
-		m_gpioBase = 0x20000000 + 0x200000; // default to PI 1
 		break;
 	}
 }

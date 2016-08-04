@@ -82,10 +82,10 @@ int main()
 		printf("Failed to set 'DHT_TYPE'. Using default of DHT11.\n");
 	}
 
-	unsigned int pi_type = TYPE_PI1;
+	unsigned int pi_type = TYPE_PI0;
 	if (rconfig_get_int("PI_TYPE", (int*)&pi_type))
 	{
-		printf("Failed to set 'PI_TYPE'. Using default of PI1.\n");
+		printf("Failed to set 'PI_TYPE'. Using default of PI0.\n");
 	}
 
 	gpiohandler::GetSingleton()->SetGPIOBase(pi_type);
