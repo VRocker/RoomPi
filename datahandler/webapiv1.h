@@ -15,6 +15,12 @@ enum class eAPIErrors
 	Unsuccessful,
 };
 
+typedef enum
+{
+	Sensor_Temp,
+	Sensor_Door,
+} Sensors;
+
 class webapiv1 : public ISingleton< webapiv1 >
 {
 public:
@@ -24,6 +30,7 @@ public:
 public:
 	eAPIErrors Authenticate();
 	eAPIErrors UpdateTemperature(int temp, int humid);
+	eAPIErrors SetSensors(unsigned char sensors);
 
 public:
 	void SetBaseUrl(const char* base);

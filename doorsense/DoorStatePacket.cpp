@@ -41,3 +41,36 @@ void DoorStatePacket::State(bool open)
 		}
 	}
 }
+
+void DoorStatePacket::SensorType(unsigned char type, bool enabled)
+{
+	msgpack_sbuffer* buffer = msgpack_sbuffer_new();
+	if (buffer)
+	{
+		msgpack_packer* pk = msgpack_packer_new(buffer, msgpack_sbuffer_write);
+
+		if (pk)
+		{
+			PreparePacket(pk, (uint8_t)SensorPacketIDs::SensorType);
+
+			msgpack_pack_uint8(pk, type);
+
+			if (enabled)
+				msgpack_pack_true(pk);
+			else 
+				msgpack_pack_false(pk);
+
+			buffer->data[buffer->size] = 0;
+
+			ClientSock::GetSingleton()->Send(buffer->data, buffer->size);
+
+			ClientSock::GetSingleton()->Recv();
+
+			msgpack_sbuffer_free(buffer);
+			buffer = nullptr;
+
+			msgpack_packer_free(pk);
+			pk = nullptr;
+		}
+	}
+}

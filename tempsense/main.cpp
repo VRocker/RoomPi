@@ -92,6 +92,8 @@ int main()
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
+	TempSensorPacket::SensorType((unsigned char)SensorTypes::Temp, true);
+
 	while ( g_isRunning )
 	{
 		printf( "Reading data...\n" );

@@ -54,6 +54,8 @@ int main()
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
 
+	DoorStatePacket::SensorType((unsigned char)SensorTypes::Door, true);
+
 	gpiohandler::GetSingleton()->SetDirection(22, GPIO_Direction::In);
 
 	bool oldState = false;
