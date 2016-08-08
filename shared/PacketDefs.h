@@ -11,9 +11,3 @@ enum class SensorPacketIDs
 	DoorStatus,
 	SensorType,
 };
-
-enum class SensorTypes
-{
-	Temp,
-	Door,
-};

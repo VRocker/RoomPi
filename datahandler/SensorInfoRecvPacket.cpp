@@ -3,6 +3,7 @@
 #include "PacketDefs.h"
 #include <stdio.h>
 #include "webapiv1.h"
+#include "SensorDefs.h"
 
 unsigned char SensorInfoRecvPacket::sensors = 0;
 
@@ -127,22 +128,10 @@ void SensorInfoRecvPacket::ParseSensorType(void * _unpacker)
 				{
 					bool enabled = msg.data.via.boolean;
 
-					switch (type)
-					{
-					case SensorTypes::Temp:
-						if (enabled)
-							sensors |= (1 << Sensor_Temp);
-						else 
-							sensors &= ~(1 << Sensor_Temp);
-						break;
-
-					case SensorTypes::Door:
-						if (enabled)
-							sensors |= (1 << Sensor_Door);
-						else 
-							sensors &= ~(1 << Sensor_Door);
-						break;
-					}
+					if (enabled)
+						sensors |= (1 << (unsigned char)type);
+					else 
+						sensors &= ~(1 << (unsigned char)type);
 
 					webapiv1::GetSingleton()->SetSensors(sensors);
 				}

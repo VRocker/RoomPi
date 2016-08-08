@@ -5,6 +5,7 @@
 #include "gpiohandler.h"
 #include "clientsock/ClientSock.h"
 #include "DoorStatePacket.h"
+#include "SensorDefs.h"
 
 static bool g_isRunning = true;
 

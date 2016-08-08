@@ -3,6 +3,7 @@
 #include <string.h>
 #include "curl/curl.h"
 #include "json-c/json.h"
+#include "SensorDefs.h"
 
 template<>
 webapiv1* ISingleton< webapiv1 >::m_singleton = nullptr;
@@ -191,8 +192,8 @@ eAPIErrors webapiv1::SetSensors(unsigned char sensors)
 	json_object* json = json_object_new_object();
 	json_object_object_add(json, "device_access_token", json_object_new_string(m_accessToken));
 	json_object_object_add(json, "device_serial_key", json_object_new_string(m_deviceSerial));
-	json_object_object_add(json, "has_temp_sensor", json_object_new_boolean((sensors & (1 << Sensor_Temp)) ? true : false));
-	json_object_object_add(json, "has_door_sensor", json_object_new_boolean((sensors & (1 << Sensor_Door)) ? true : false));
+	json_object_object_add(json, "has_temp_sensor", json_object_new_boolean((sensors & (1 << (unsigned char)SensorTypes::Temp)) ? true : false));
+	json_object_object_add(json, "has_door_sensor", json_object_new_boolean((sensors & (1 << (unsigned char)SensorTypes::Door)) ? true : false));
 
 	const char* jc = json_object_to_json_string(json);
 	curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, jc);

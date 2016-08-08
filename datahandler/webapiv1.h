@@ -15,12 +15,6 @@ enum class eAPIErrors
 	Unsuccessful,
 };
 
-typedef enum
-{
-	Sensor_Temp,
-	Sensor_Door,
-} Sensors;
-
 class webapiv1 : public ISingleton< webapiv1 >
 {
 public:

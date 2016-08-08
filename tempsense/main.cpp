@@ -7,6 +7,7 @@
 #include "clientsock/ClientSock.h"
 #include "TempSensorPacket.h"
 #include "rconfig.h"
+#include "SensorDefs.h"
 
 static bool g_isRunning = true;
 
