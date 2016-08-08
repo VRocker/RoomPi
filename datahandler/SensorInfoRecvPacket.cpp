@@ -3,6 +3,9 @@
 #include "PacketDefs.h"
 #include <stdio.h>
 #include "webapiv1.h"
+#include "SensorDefs.h"
+
+unsigned char SensorInfoRecvPacket::sensors = 0;
 
 void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 {
@@ -28,6 +31,12 @@ void SensorInfoRecvPacket::ParsePacket(void * _unpacker)
 			case SensorPacketIDs::DoorStatus:
 			{
 				ParseDoorStatus(_unpacker);
+			}
+			break;
+
+			case SensorPacketIDs::SensorType:
+			{
+				ParseSensorType(_unpacker);
 			}
 			break;
 			}
@@ -96,4 +105,37 @@ void SensorInfoRecvPacket::ParseDoorStatus(void * _unpacker)
 	}
 
 	msgpack_unpacked_destroy(&msg);
+}
+
+void SensorInfoRecvPacket::ParseSensorType(void * _unpacker)
+{
+	msgpack_unpacked msg;
+	msgpack_unpacked_init(&msg);
+
+	msgpack_unpack_return ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
+
+	if (ret)
+	{
+		if (msg.data.type == MSGPACK_OBJECT_POSITIVE_INTEGER)
+		{
+			SensorTypes type = (SensorTypes)msg.data.via.u64;
+
+			ret = msgpack_unpacker_next((msgpack_unpacker*)_unpacker, &msg);
+
+			if (ret)
+			{
+				if (msg.data.type == MSGPACK_OBJECT_BOOLEAN)
+				{
+					bool enabled = msg.data.via.boolean;
+
+					if (enabled)
+						sensors |= (1 << (unsigned char)type);
+					else 
+						sensors &= ~(1 << (unsigned char)type);
+
+					webapiv1::GetSingleton()->SetSensors(sensors);
+				}
+			}
+		}
+	}
 }

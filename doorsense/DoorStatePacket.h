@@ -6,5 +6,6 @@ private:
 
 public:
 	static void State( bool open );
+	static void SensorType(unsigned char type, bool enabled);
 };
 

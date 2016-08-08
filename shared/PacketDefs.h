@@ -8,5 +8,6 @@ enum class PrimaryPacketIDs
 enum class SensorPacketIDs
 {
 	TempAndHumid,
-	DoorStatus
+	DoorStatus,
+	SensorType,
 };
