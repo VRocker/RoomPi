@@ -5,6 +5,7 @@
 #include "gpiohandler.h"
 #include "clientsock/ClientSock.h"
 #include "DoorStatePacket.h"
+#include "SensorDefs.h"
 
 static bool g_isRunning = true;
 
@@ -53,6 +54,8 @@ int main()
 	signal(SIGINT, sig_handler);
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
+
+	DoorStatePacket::SensorType((unsigned char)SensorTypes::Door, true);
 
 	gpiohandler::GetSingleton()->SetDirection(22, GPIO_Direction::In);
 

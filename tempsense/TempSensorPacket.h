@@ -1,4 +1,5 @@
 #pragma once
+
 class TempSensorPacket
 {
 private:
@@ -6,5 +7,6 @@ private:
 
 public:
 	static void TempAndHumidity( int temp, int humidity );
+	static void SensorType(unsigned char type, bool enabled);
 };
 

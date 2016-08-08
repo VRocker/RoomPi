@@ -7,6 +7,7 @@
 #include "clientsock/ClientSock.h"
 #include "TempSensorPacket.h"
 #include "rconfig.h"
+#include "SensorDefs.h"
 
 static bool g_isRunning = true;
 
@@ -91,6 +92,8 @@ int main()
 	gpiohandler::GetSingleton()->SetGPIOBase(pi_type);
 
 	ClientSock::GetSingleton()->Connect("ipc:///tmp/datasock.sock");
+
+	TempSensorPacket::SensorType((unsigned char)SensorTypes::Temp, true);
 
 	while ( g_isRunning )
 	{
