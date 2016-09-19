@@ -467,6 +467,10 @@ eAPIErrors webapiv1::Authenticate()
 			}
 		}
 	}
+	else
+	{
+		printf( "Curl Error: %s [%u]\n", curl_easy_strerror(curl_res), curl_res );
+	}
 
 	if (returnedJson)
 	{
@@ -503,3 +507,4 @@ size_t webapiv1::JsonCallback(void *contents, size_t size, size_t nmemb, void **
 
 	return realSize;
 }
+
