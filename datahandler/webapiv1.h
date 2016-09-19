@@ -26,6 +26,7 @@ public:
 	eAPIErrors UpdateTemperature(int temp, int humid);
 	eAPIErrors UpdateDoorState(bool state);
 	eAPIErrors SetSensors(unsigned char sensors);
+	eAPIErrors SetDeviceInfo( const char* ipAddress, const char* subnetMask, const char* gateway, const char* hostname );
 
 public:
 	void SetBaseUrl(const char* base);

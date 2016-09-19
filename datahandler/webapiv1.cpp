@@ -379,6 +379,113 @@ eAPIErrors webapiv1::SetSensors(unsigned char sensors)
 	return retVal;
 }
 
+eAPIErrors webapiv1::SetDeviceInfo(const char* ipAddress, const char* subnetMask, const char* gateway, const char* hostname)
+{
+	if (!GetBaseUrl())
+		return eAPIErrors::NoBaseURL;
+
+	if (!*m_accessToken)
+		return eAPIErrors::NoAccessToken;
+
+	if (!m_curl)
+		return eAPIErrors::FailedCurlInit;
+
+	{
+		char tmpBuffer[255] = { 0 };
+		sprintf(tmpBuffer, "%s/api/deviceinformation", GetBaseUrl());
+		curl_easy_setopt(m_curl, CURLOPT_URL, tmpBuffer);
+	}
+
+	struct curl_slist* headers = nullptr;
+	headers = curl_slist_append(headers, "Accept: application/json");
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+	curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, headers);
+
+	json_object* json = json_object_new_object();
+	json_object_object_add(json, "device_access_token", json_object_new_string(m_accessToken));
+	json_object_object_add(json, "device_serial_key", json_object_new_string(m_deviceSerial));
+	json_object_object_add(json, "ip_address", json_object_new_string(ipAddress));
+	json_object_object_add(json, "subnet", json_object_new_string(subnetMask));
+	json_object_object_add(json, "gateway", json_object_new_string(gateway));
+	json_object_object_add(json, "hostname", json_object_new_string(hostname));
+
+	const char* jc = json_object_to_json_string(json);
+	curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, jc);
+
+	char* returnedJson = nullptr;
+	curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &returnedJson);
+	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, JsonCallback);
+
+	CURLcode curl_res = CURLE_OK;
+	long httpCode = 200;
+	eAPIErrors retVal = eAPIErrors::Unknown;
+
+	if ((curl_res = curl_easy_perform(m_curl)) == CURLE_OK)
+	{
+		if (json_object_put(json))
+			json = nullptr;
+
+		enum json_tokener_error jerr = json_tokener_success;
+
+		curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &httpCode);
+		if ((httpCode == 200) || (httpCode == 400))
+		{
+			if (returnedJson)
+			{
+				json = json_tokener_parse_verbose((const char*) returnedJson, &jerr);
+				if (jerr == json_tokener_success)
+				{
+					json_object* token = nullptr;
+					if (json_object_object_get_ex(json, "success", &token))
+					{
+						if (json_object_is_type(token, json_type_boolean))
+						{
+							bool isSuccessful = json_object_get_boolean(token);
+							if (isSuccessful)
+							{
+								retVal = eAPIErrors::Okay;
+							}
+							else
+							{
+								token = nullptr;
+								if (json_object_object_get_ex(json, "message", &token))
+								{
+									const char* err = json_object_get_string(token);
+									printf("Error: %s\n", err);
+								}
+
+								// Nuts... no token for us :(
+								retVal = eAPIErrors::Unsuccessful;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (returnedJson)
+	{
+		free(returnedJson);
+		returnedJson = nullptr;
+	}
+
+	if (json)
+	{
+		if (json_object_put(json))
+			json = nullptr;
+	}
+
+	if (headers)
+	{
+		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, nullptr);
+		curl_slist_free_all(headers);
+		headers = nullptr;
+	}
+
+	return retVal;
+}
+
 eAPIErrors webapiv1::Authenticate()
 {
 	if (!GetBaseUrl())
