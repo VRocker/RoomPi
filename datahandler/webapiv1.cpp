@@ -392,7 +392,7 @@ eAPIErrors webapiv1::SetDeviceInfo(const char* ipAddress, const char* subnetMask
 
 	{
 		char tmpBuffer[255] = { 0 };
-		sprintf(tmpBuffer, "%s/api/deviceinformation", GetBaseUrl());
+		sprintf(tmpBuffer, "%s/api/deviceinfo", GetBaseUrl());
 		curl_easy_setopt(m_curl, CURLOPT_URL, tmpBuffer);
 	}
 
