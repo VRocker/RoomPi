@@ -114,30 +114,33 @@ eAPIErrors webapiv1::UpdateTemperature(int temp, int humid)
 		curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &httpCode);
 		if ((httpCode == 200) || (httpCode == 400))
 		{
-			json = json_tokener_parse_verbose((const char*)returnedJson, &jerr);
-			if (jerr == json_tokener_success)
+			if (returnedJson)
 			{
-				json_object* token = nullptr;
-				if (json_object_object_get_ex(json, "success", &token))
+				json = json_tokener_parse_verbose((const char*) returnedJson, &jerr);
+				if (jerr == json_tokener_success)
 				{
-					if (json_object_is_type(token, json_type_boolean))
+					json_object* token = nullptr;
+					if (json_object_object_get_ex(json, "success", &token))
 					{
-						bool isSuccessful = json_object_get_boolean(token);
-						if (isSuccessful)
+						if (json_object_is_type(token, json_type_boolean))
 						{
-							retVal = eAPIErrors::Okay;
-						}
-						else
-						{
-							token = nullptr;
-							if (json_object_object_get_ex(json, "message", &token))
+							bool isSuccessful = json_object_get_boolean(token);
+							if (isSuccessful)
 							{
-								const char* err = json_object_get_string(token);
-								printf("Error: %s\n", err);
+								retVal = eAPIErrors::Okay;
 							}
+							else
+							{
+								token = nullptr;
+								if (json_object_object_get_ex(json, "message", &token))
+								{
+									const char* err = json_object_get_string(token);
+									printf("Error: %s\n", err);
+								}
 
-							// Nuts... no token for us :(
-							retVal = eAPIErrors::Unsuccessful;
+								// Nuts... no token for us :(
+								retVal = eAPIErrors::Unsuccessful;
+							}
 						}
 					}
 				}
@@ -215,30 +218,33 @@ eAPIErrors webapiv1::UpdateDoorState(bool state)
 		curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &httpCode);
 		if ((httpCode == 200) || (httpCode == 400))
 		{
-			json = json_tokener_parse_verbose((const char*)returnedJson, &jerr);
-			if (jerr == json_tokener_success)
+			if (returnedJson)
 			{
-				json_object* token = nullptr;
-				if (json_object_object_get_ex(json, "success", &token))
+				json = json_tokener_parse_verbose((const char*) returnedJson, &jerr);
+				if (jerr == json_tokener_success)
 				{
-					if (json_object_is_type(token, json_type_boolean))
+					json_object* token = nullptr;
+					if (json_object_object_get_ex(json, "success", &token))
 					{
-						bool isSuccessful = json_object_get_boolean(token);
-						if (isSuccessful)
+						if (json_object_is_type(token, json_type_boolean))
 						{
-							retVal = eAPIErrors::Okay;
-						}
-						else
-						{
-							token = nullptr;
-							if (json_object_object_get_ex(json, "message", &token))
+							bool isSuccessful = json_object_get_boolean(token);
+							if (isSuccessful)
 							{
-								const char* err = json_object_get_string(token);
-								printf("Error: %s\n", err);
+								retVal = eAPIErrors::Okay;
 							}
+							else
+							{
+								token = nullptr;
+								if (json_object_object_get_ex(json, "message", &token))
+								{
+									const char* err = json_object_get_string(token);
+									printf("Error: %s\n", err);
+								}
 
-							// Nuts... no token for us :(
-							retVal = eAPIErrors::Unsuccessful;
+								// Nuts... no token for us :(
+								retVal = eAPIErrors::Unsuccessful;
+							}
 						}
 					}
 				}
@@ -317,30 +323,33 @@ eAPIErrors webapiv1::SetSensors(unsigned char sensors)
 		curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &httpCode);
 		if ((httpCode == 200) || (httpCode == 400))
 		{
-			json = json_tokener_parse_verbose((const char*)returnedJson, &jerr);
-			if (jerr == json_tokener_success)
+			if (returnedJson)
 			{
-				json_object* token = nullptr;
-				if (json_object_object_get_ex(json, "success", &token))
+				json = json_tokener_parse_verbose((const char*) returnedJson, &jerr);
+				if (jerr == json_tokener_success)
 				{
-					if (json_object_is_type(token, json_type_boolean))
+					json_object* token = nullptr;
+					if (json_object_object_get_ex(json, "success", &token))
 					{
-						bool isSuccessful = json_object_get_boolean(token);
-						if (isSuccessful)
+						if (json_object_is_type(token, json_type_boolean))
 						{
-							retVal = eAPIErrors::Okay;
-						}
-						else
-						{
-							token = nullptr;
-							if (json_object_object_get_ex(json, "message", &token))
+							bool isSuccessful = json_object_get_boolean(token);
+							if (isSuccessful)
 							{
-								const char* err = json_object_get_string(token);
-								printf("Error: %s\n", err);
+								retVal = eAPIErrors::Okay;
 							}
+							else
+							{
+								token = nullptr;
+								if (json_object_object_get_ex(json, "message", &token))
+								{
+									const char* err = json_object_get_string(token);
+									printf("Error: %s\n", err);
+								}
 
-							// Nuts... no token for us :(
-							retVal = eAPIErrors::Unsuccessful;
+								// Nuts... no token for us :(
+								retVal = eAPIErrors::Unsuccessful;
+							}
 						}
 					}
 				}
@@ -418,49 +427,52 @@ eAPIErrors webapiv1::Authenticate()
 		enum json_tokener_error jerr = json_tokener_success;
 
 		curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &httpCode);
-		if ( (httpCode == 200) || ( httpCode == 400 ) )
+		if ((httpCode == 200) || (httpCode == 400))
 		{
-			json = json_tokener_parse_verbose((const char*)returnedJson, &jerr);
-			if (jerr == json_tokener_success)
+			if (returnedJson)
 			{
-				json_object* token = nullptr;
-				if (json_object_object_get_ex(json, "success", &token))
+				json = json_tokener_parse_verbose((const char*) returnedJson, &jerr);
+				if (jerr == json_tokener_success)
 				{
-					if (json_object_is_type(token, json_type_boolean))
+					json_object* token = nullptr;
+					if (json_object_object_get_ex(json, "success", &token))
 					{
-						bool isSuccessful = json_object_get_boolean(token);
-						if (isSuccessful)
+						if (json_object_is_type(token, json_type_boolean))
 						{
-							// We have an access token
-							token = nullptr;
-							if (json_object_object_get_ex(json, "access_token", &token))
+							bool isSuccessful = json_object_get_boolean(token);
+							if (isSuccessful)
 							{
-								if (json_object_is_type(token, json_type_string))
+								// We have an access token
+								token = nullptr;
+								if (json_object_object_get_ex(json, "access_token", &token))
 								{
-									const char* accessToken = json_object_get_string(token);
-									strncpy(m_accessToken, accessToken, sizeof(m_accessToken));
+									if (json_object_is_type(token, json_type_string))
+									{
+										const char* accessToken = json_object_get_string(token);
+										strncpy(m_accessToken, accessToken, sizeof(m_accessToken));
 
-									printf("Access Token: %s\n", accessToken );
+										printf("Access Token: %s\n", accessToken);
 
-									retVal = eAPIErrors::Okay;
+										retVal = eAPIErrors::Okay;
+									}
+									else
+										printf("Token not a string.\n");
 								}
 								else
-									printf( "Token not a string.\n" );
+									printf("Cant find token.\n");
 							}
 							else
-								printf( "Cant find token.\n" );
-						}
-						else
-						{
-							token = nullptr;
-							if (json_object_object_get_ex(json, "message", &token))
 							{
-								const char* err = json_object_get_string(token);
-								printf( "Error: %s\n", err );
-							}
+								token = nullptr;
+								if (json_object_object_get_ex(json, "message", &token))
+								{
+									const char* err = json_object_get_string(token);
+									printf("Error: %s\n", err);
+								}
 
-							// Nuts... no token for us :(
-							retVal = eAPIErrors::Unsuccessful;
+								// Nuts... no token for us :(
+								retVal = eAPIErrors::Unsuccessful;
+							}
 						}
 					}
 				}
