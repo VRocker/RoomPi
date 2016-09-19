@@ -36,7 +36,7 @@ void DeviceInfo::Update(void)
 	struct ifaddrs *ifaddr, *ifa;
 	char address[NI_MAXHOST];
 	char netmask[NI_MAXHOST];
-	char broadcast[NI_MAXHOST];
+	//char broadcast[NI_MAXHOST];
 	char hostname[128];
 
 	if (m_name == nullptr) return;
@@ -73,4 +73,19 @@ void DeviceInfo::Update(void)
 	}
 
 	freeifaddrs(ifaddr);
+}
+
+void DeviceInfo::RetrieveGetaway(char* gateway, size_t len)
+{
+	FILE* net = popen("route -n | grep 'UG[ \t]' | awk '{ print $2 }'", "r");
+	if (!net)
+		return;
+
+	char buffer[16];
+	if (fgets(buffer, sizeof(buffer), net))
+	{
+		str_cpy(gateway, buffer, len);
+		gateway[strlen(gateway) - 1] = 0;
+	}
+	pclose(net);
 }
