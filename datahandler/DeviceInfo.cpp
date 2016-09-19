@@ -69,7 +69,7 @@ void DeviceInfo::Update(void)
 
 		//printf("[%s] IP: %s - Netmask: %s - Broadcast: %s\n", hostname, address, netmask, broadcast);
 
-		return;
+		break;
 	}
 
 	freeifaddrs(ifaddr);

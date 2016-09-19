@@ -115,7 +115,7 @@ loadAPIKey:
 	if (!rconfig_get_string("NETDEV_NAME", netName, sizeof(netName)))
 		info->SetName(netName);
 	else
-		printf("ERROR: Failed to find network device name.\n");
+		info->SetName("wlan0"); // default.
 
 	info->Update();
 
