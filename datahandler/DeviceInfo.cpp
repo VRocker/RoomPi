@@ -36,8 +36,8 @@ void DeviceInfo::Update(void)
 	struct ifaddrs *ifaddr, *ifa;
 	char address[NI_MAXHOST];
 	char netmask[NI_MAXHOST];
-	//char broadcast[NI_MAXHOST];
 	char hostname[128];
+	char gateway[18];
 
 	if (m_name == nullptr) return;
 
@@ -45,7 +45,7 @@ void DeviceInfo::Update(void)
 
 	for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
 	{
-		if (ifa->ifa_addr == nullptr || ifa->ifa_netmask == nullptr || ifa->ifa_broadaddr == nullptr)
+		if (ifa->ifa_addr == nullptr || ifa->ifa_netmask == nullptr)
 			continue;
 
 		if (ifa->ifa_addr->sa_family != AF_INET)
@@ -60,14 +60,13 @@ void DeviceInfo::Update(void)
 		if (getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in), netmask, NI_MAXHOST, nullptr, 0, NI_NUMERICHOST) != 0)
 			continue;
 
-		if (getnameinfo(ifa->ifa_broadaddr, sizeof(struct sockaddr_in), broadcast, NI_MAXHOST, nullptr, 0, NI_NUMERICHOST) != 0)
-			continue;
+		RetrieveGetaway(gateway, sizeof(gateway));
 
 		gethostname(hostname, sizeof(hostname));
 
-		webapiv1::GetSingleton()->SetDeviceInfo(address, netmask, broadcast, hostname);
+		webapiv1::GetSingleton()->SetDeviceInfo(address, netmask, gateway, hostname);
 
-		//printf("[%s] IP: %s - Netmask: %s - Broadcast: %s\n", hostname, address, netmask, broadcast);
+		//printf("[%s] IP: %s - Netmask: %s - Gateway: %s\n", hostname, address, netmask, gateway);
 
 		break;
 	}
@@ -81,7 +80,7 @@ void DeviceInfo::RetrieveGetaway(char* gateway, size_t len)
 	if (!net)
 		return;
 
-	char buffer[16];
+	char buffer[18];
 	if (fgets(buffer, sizeof(buffer), net))
 	{
 		str_cpy(gateway, buffer, len);
