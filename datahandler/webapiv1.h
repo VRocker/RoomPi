@@ -33,7 +33,7 @@ public:
 	{
 		if (m_baseUrl)
 			return m_baseUrl;
-		return "http://vrocker-hosting.ovh/roompi/";
+		return "https://roompi.io/";
 	}
 
 	void SetDeviceSerial(const char* serial);
