@@ -6,12 +6,14 @@
 #include "Utils.h"
 #include <stdio.h>
 #include "rconfig.h"
+#include "DeviceInfo.h"
 
 void handleExit()
 {
 	rconfig_close();
 
 	webapiv1::CleanupSingleton();
+	DeviceInfo::CleanupSingleton();
 	SockHandler::CleanupSingleton();
 }
 
@@ -106,6 +108,16 @@ loadAPIKey:
 		// Try agin in 5 minutes if it failed
 		sleep(300);
 	}
+
+	DeviceInfo* info = DeviceInfo::GetSingleton();
+
+	char netName[128];
+	if (!rconfig_get_string("NETDEV_NAME", netName, sizeof(netName)))
+		info->SetName(netName);
+	else
+		printf("ERROR: Failed to find network device name.\n");
+
+	info->Update();
 
 	handler->Run();
 
