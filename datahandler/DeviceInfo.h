@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISingleton.h"
+#include "strutils.h"
 
 class DeviceInfo : public ISingleton<DeviceInfo>
 {
@@ -12,5 +13,6 @@ public:
 	void Update(void);
 
 private:
+	void RetrieveGetaway(char* gateway, size_t len);
 	char* m_name;
 };
