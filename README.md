@@ -36,10 +36,10 @@ Password: roompi
 
 # RoomPi Config File
 #####/pi/etc/roompi.conf
-The RoomPi config file will be used to setup your device ready for the API usage. You will need to add your API key for this device (obtainable from http://vrocker-hosting.ovh/roompi/dashboard) to the config file before you do anything else.
+The RoomPi config file will be used to setup your device ready for the API usage. You will need to add your API key for this device (obtainable from http://roompi.io/dashboard) to the config file before you do anything else.
 
 ```
-API_KEY=<your key> # The API key for your device which is found from (http://vrocker-hosting.ovh/roompi/dashboard)
+API_KEY=<your key> # The API key for your device which is found from (http://roompi.io/dashboard)
 TEMP_INTERVAL=300 # This is the recommended interval for sending updates to the API
 DHT_PIN=<pin> # This depends on what GPIO pin your temp sensor is connected to (typically GPIO25)
 DHT_TYPE=<type> # This will be either; 0 = DHT11, 1 = DHT22
