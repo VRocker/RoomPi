@@ -1,5 +1,17 @@
 # RoomPi
-Room monitoring with a Raspberry Pi
+Turn your Raspberry Pi into a room monitoring device with RoomPi!
+
+# Installation Options
+
+## Raspbian / Debian Install
+
+RoomPi can be installed on your current Raspberry / Debian install! Follow [these instructions](http://blog.roompi.io/roompi-on-raspbian-how-do-i-do-that/) on how to do so!
+
+---
+
+## Standalone Operating System
+
+The other option is that you can install RoomPi as a standalone operating system, which can be achieved by following the steps below!
 
 # Cloning the repository
 RoomPi makes use of Buildroot which is added a submodule so once you have cloned this repo you will need to initialise the submodules. This is done by running the following commands:
